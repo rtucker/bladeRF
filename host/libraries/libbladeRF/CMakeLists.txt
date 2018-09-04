@@ -87,6 +87,11 @@ option(ENABLE_RFIC_TIMING_CALIBRATION
        OFF
 )
 
+option(TREAT_UNSUPPORTED_FUNCTIONS_AS_WARNINGS
+       "If this is enabled, and a hardware-specific function is used on an unsupported device, an error will be printed and the function will return 0. Otherwise, BLADERF_ERR_UNSUPPORTED is returned."
+       OFF
+)
+
 ##############################
 # Backend Support
 ##############################
@@ -143,6 +148,10 @@ endif()
 
 if(ENABLE_RFIC_TIMING_CALIBRATION)
     add_definitions(-DENABLE_AD9361_DIGITAL_INTERFACE_TIMING_VERIFICATION)
+endif()
+
+if(TREAT_UNSUPPORTED_FUNCTIONS_AS_WARNINGS)
+    add_definitions(-DWARN_ON_UNSUPPORTED_FUNCTION)
 endif()
 
 if(${CMAKE_C_COMPILER_ID} STREQUAL "GNU" OR
