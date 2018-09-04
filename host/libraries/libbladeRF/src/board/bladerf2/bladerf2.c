@@ -55,6 +55,18 @@
 #include "helpers/wallclock.h"
 #include "version.h"
 
+/**
+ * If a function is only supported on a bladeRF 2 but it is called with a
+ * different device, the intended behavior is to return
+ * BLADERF_ERR_UNSUPPORTED. However, if UNSUPPORTED_SOFT_FAIL is true, these
+ * functions will instead return 0.
+ */
+static bool const UNSUPPORTED_SOFT_FAIL =
+#ifdef WARN_ON_UNSUPPORTED_FUNCTION
+    true;
+#else
+    false;
+#endif  // WARN_ON_UNSUPPORTED_FUNCTION
 
 /******************************************************************************
  *                          bladeRF2 board state                              *
@@ -2939,7 +2951,8 @@ static int bladerf2_get_quick_tune(struct bladerf *dev,
                                    bladerf_channel ch,
                                    struct bladerf_quick_tune *quick_tune)
 {
-    return BLADERF_ERR_UNSUPPORTED;
+    log_error("%s: not supported by this device\n");
+    return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
 }
 
 static int bladerf2_schedule_retune(struct bladerf *dev,
@@ -2949,13 +2962,15 @@ static int bladerf2_schedule_retune(struct bladerf *dev,
                                     struct bladerf_quick_tune *quick_tune)
 
 {
-    return BLADERF_ERR_UNSUPPORTED;
+    log_error("%s: not supported by this device\n");
+    return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
 }
 
 static int bladerf2_cancel_scheduled_retunes(struct bladerf *dev,
                                              bladerf_channel ch)
 {
-    return BLADERF_ERR_UNSUPPORTED;
+    log_error("%s: not supported by this device\n");
+    return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
 }
 
 
@@ -3653,14 +3668,16 @@ static int bladerf2_set_stream_timeout(struct bladerf *dev,
                                        bladerf_direction dir,
                                        unsigned int timeout)
 {
-    return BLADERF_ERR_UNSUPPORTED;
+    log_error("%s: not supported by this device\n");
+    return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
 }
 
 static int bladerf2_get_stream_timeout(struct bladerf *dev,
                                        bladerf_direction dir,
                                        unsigned int *timeout)
 {
-    return BLADERF_ERR_UNSUPPORTED;
+    log_error("%s: not supported by this device\n");
+    return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
 }
 
 static int bladerf2_sync_config(struct bladerf *dev,
@@ -3938,13 +3955,15 @@ static int bladerf2_device_reset(struct bladerf *dev)
 static int bladerf2_set_tuning_mode(struct bladerf *dev,
                                     bladerf_tuning_mode mode)
 {
-    return BLADERF_ERR_UNSUPPORTED;
+    log_error("%s: not supported by this device\n");
+    return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
 }
 
 static int bladerf2_get_tuning_mode(struct bladerf *dev,
                                     bladerf_tuning_mode *mode)
 {
-    return BLADERF_ERR_UNSUPPORTED;
+    log_error("%s: not supported by this device\n");
+    return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
 }
 
 
@@ -4135,13 +4154,15 @@ static int bladerf2_get_rx_mux(struct bladerf *dev, bladerf_rx_mux *mode)
 static int bladerf2_set_vctcxo_tamer_mode(struct bladerf *dev,
                                           bladerf_vctcxo_tamer_mode mode)
 {
-    return BLADERF_ERR_UNSUPPORTED;
+    log_error("%s: not supported by this device\n");
+    return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
 }
 
 static int bladerf2_get_vctcxo_tamer_mode(struct bladerf *dev,
                                           bladerf_vctcxo_tamer_mode *mode)
 {
-    return BLADERF_ERR_UNSUPPORTED;
+    log_error("%s: not supported by this device\n");
+    return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
 }
 
 /******************************************************************************/
@@ -4422,7 +4443,8 @@ static int bladerf2_write_flash(struct bladerf *dev,
 
 static int bladerf2_expansion_attach(struct bladerf *dev, bladerf_xb xb)
 {
-    return BLADERF_ERR_UNSUPPORTED;
+    log_error("%s: not supported by this device\n");
+    return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
 }
 
 static int bladerf2_expansion_get_attached(struct bladerf *dev, bladerf_xb *xb)
@@ -4550,7 +4572,8 @@ int bladerf_get_bias_tee(struct bladerf *dev, bladerf_channel ch, bool *enable)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     if (NULL == enable) {
@@ -4589,7 +4612,8 @@ int bladerf_set_bias_tee(struct bladerf *dev, bladerf_channel ch, bool enable)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     MUTEX_LOCK(&dev->lock);
@@ -4641,7 +4665,8 @@ int bladerf_get_rfic_register(struct bladerf *dev,
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     if (NULL == val) {
@@ -4679,7 +4704,8 @@ int bladerf_set_rfic_register(struct bladerf *dev,
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     MUTEX_LOCK(&dev->lock);
@@ -4711,7 +4737,8 @@ int bladerf_get_rfic_temperature(struct bladerf *dev, float *val)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     CHECK_BOARD_STATE(STATE_FPGA_LOADED);
@@ -4739,7 +4766,8 @@ int bladerf_get_rfic_rssi(struct bladerf *dev,
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     MUTEX_LOCK(&dev->lock);
@@ -4796,7 +4824,8 @@ int bladerf_get_rfic_ctrl_out(struct bladerf *dev, uint8_t *ctrl_out)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     if (NULL == ctrl_out) {
@@ -4825,7 +4854,8 @@ int bladerf_get_rfic_rx_fir(struct bladerf *dev, bladerf_rfic_rxfir *rxfir)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     CHECK_BOARD_STATE(STATE_FPGA_LOADED);
@@ -4850,7 +4880,8 @@ int bladerf_set_rfic_rx_fir(struct bladerf *dev, bladerf_rfic_rxfir rxfir)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     CHECK_BOARD_STATE(STATE_FPGA_LOADED);
@@ -4909,7 +4940,8 @@ int bladerf_get_rfic_tx_fir(struct bladerf *dev, bladerf_rfic_txfir *txfir)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     CHECK_BOARD_STATE(STATE_FPGA_LOADED);
@@ -4934,7 +4966,8 @@ int bladerf_set_rfic_tx_fir(struct bladerf *dev, bladerf_rfic_txfir txfir)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     CHECK_BOARD_STATE(STATE_FPGA_LOADED);
@@ -5000,7 +5033,8 @@ static int bladerf_pll_configure(struct bladerf *dev, uint16_t R, uint16_t N)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     if (R < 1 || R > 16383) {
@@ -5143,7 +5177,8 @@ int bladerf_get_pll_lock_state(struct bladerf *dev, bool *locked)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     if (NULL == locked) {
@@ -5173,7 +5208,8 @@ int bladerf_get_pll_enable(struct bladerf *dev, bool *enabled)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     if (NULL == enabled) {
@@ -5208,7 +5244,8 @@ int bladerf_set_pll_enable(struct bladerf *dev, bool enable)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     board_data = dev->board_data;
@@ -5290,7 +5327,8 @@ int bladerf_get_pll_refclk(struct bladerf *dev, bladerf_frequency *frequency)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     // Get the current R value (latch 0, bits 2-15)
@@ -5324,7 +5362,8 @@ int bladerf_set_pll_refclk(struct bladerf *dev, bladerf_frequency frequency)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     // We assume the system clock frequency is BLADERF_VCTCXO_FREQUENCY.
@@ -5355,7 +5394,8 @@ int bladerf_get_pll_register(struct bladerf *dev,
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     if (NULL == val) {
@@ -5391,7 +5431,8 @@ int bladerf_set_pll_register(struct bladerf *dev, uint8_t address, uint32_t val)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     MUTEX_LOCK(&dev->lock);
@@ -5427,7 +5468,8 @@ int bladerf_get_power_source(struct bladerf *dev, bladerf_power_sources *src)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     if (NULL == src) {
@@ -5469,7 +5511,8 @@ int bladerf_get_clock_select(struct bladerf *dev, bladerf_clock_select *sel)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     if (NULL == sel) {
@@ -5507,7 +5550,8 @@ int bladerf_set_clock_select(struct bladerf *dev, bladerf_clock_select sel)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     MUTEX_LOCK(&dev->lock);
@@ -5558,7 +5602,8 @@ int bladerf_get_clock_output(struct bladerf *dev, bool *state)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     if (NULL == state) {
@@ -5592,7 +5637,8 @@ int bladerf_set_clock_output(struct bladerf *dev, bool enable)
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     MUTEX_LOCK(&dev->lock);
@@ -5636,7 +5682,8 @@ int bladerf_get_pmic_register(struct bladerf *dev,
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     MUTEX_LOCK(&dev->lock);
@@ -5688,7 +5735,8 @@ int bladerf_get_rf_switch_config(struct bladerf *dev,
     }
 
     if (dev->board != &bladerf2_board_fns) {
-        return BLADERF_ERR_UNSUPPORTED;
+        log_error("%s: not supported by this device\n");
+        return UNSUPPORTED_SOFT_FAIL ? 0 : BLADERF_ERR_UNSUPPORTED;
     }
 
     if (NULL == config) {
