@@ -1,0 +1,49 @@
+{
+    "app-id": "com.nuand.bladeRF.json",
+    "runtime": "org.freedesktop.Platform",
+    "runtime-version": "1.6",
+    "sdk": "org.freedesktop.Sdk",
+    "command": "bladeRF-cli",
+    "finish-args": [
+        "--device=all"  /* required for USB access */
+    ],
+    "modules": [
+        {
+            "name": "libusb",
+            "config-opts": [
+                "--disable-static",
+                "--disable-udev",
+                "--prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/libusb/libusb.git",
+                    "tag": "v1.0.22",
+                    "commit": "0034b2afdcdb1614e78edaa2a9e22d5936aeae5d"
+                }
+            ],
+            "post-install": [
+                "install -Dm644 -t /app/share/licenses/libusb COPYING"
+            ]
+        },
+        {
+            "name": "bladeRF",
+            "buildsystem": "cmake",
+            "builddir": true,
+            "config-opts": [
+                "-DENABLE_FX3_BUILD=OFF",
+                "-DTAGGED_RELEASE=Yes",
+                "-DVERSION_INFO_OVERRIDE=flatpak-2018.08"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/Nuand/bladeRF.git",
+                    "tag": "2018.08",
+                    "commit": "32058c47263222fa213fc61bd1156d11b0d802f0"
+                }
+            ]
+        }
+    ]
+}
