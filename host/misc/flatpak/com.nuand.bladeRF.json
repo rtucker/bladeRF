@@ -47,3 +47,9 @@
         }
     ]
 }
+
+/* TODO:
+ - download FPGA bitstreams
+ - https://github.com/flathub/flathub/wiki/App-Requirements
+ - https://github.com/flathub/flathub/wiki/App-Submission
+*/
